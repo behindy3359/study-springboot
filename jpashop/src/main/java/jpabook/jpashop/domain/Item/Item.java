@@ -2,6 +2,7 @@ package jpabook.jpashop.domain.Item;
 
 import jakarta.persistence.*;
 import jpabook.jpashop.domain.Category;
+import jpabook.jpashop.exception.NotEnoughStockException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,4 +28,15 @@ public abstract class Item {
   @ManyToMany(mappedBy = "items")
   private List<Category> categories = new ArrayList<>();
 
+  public void addStock(int quantity){// 재고수량을 증가( 또는 변화 )
+    this.stockQuantity += quantity;
+  }
+
+  public void removeStock(int quantity){
+    int restStock = this.stockQuantity - quantity;
+    if (restStock < 0){
+      throw new NotEnoughStockException("need more stock, 상품의 재고는 0 미만이 될 수 없습니다.");
+    }
+    this.stockQuantity = restStock;
+  }
 }
